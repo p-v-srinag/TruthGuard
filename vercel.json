@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "pnpm build",
@@ -8,3 +9,15 @@
     }
   ]
 }
+=======
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm build",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index"
+    }
+  ]
+}
+>>>>>>> 12da2daefa48c47bfbf3cb13f52a635207f21215
