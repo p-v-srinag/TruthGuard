@@ -18,9 +18,10 @@ export interface RuntimeConfig {
   payTo: string;
   price: string;
   challengeMode: boolean;
-  demoMode: boolean;
-  demoMnemonic?: string;
   defaultWalletAddress: string;
+  googleFactCheckApiKey?: string;
+  groqApiKey?: string;
+  groqModel?: string;
 }
 
 const NETWORKS = {
@@ -61,11 +62,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): RuntimeConfig 
     throw new Error('WALLET_ADDRESS is not a valid Algorand address.');
   }
 
-  const demoMode = env.DEMO_MODE === 'true';
-  if (demoMode && networkName !== 'testnet') {
-    throw new Error('DEMO_MODE is TestNet-only. Disable it before using MainNet.');
-  }
-
   return {
     port,
     networkName,
@@ -76,8 +72,9 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): RuntimeConfig 
     payTo,
     price: env.PRICE_USDC ?? '$0.001',
     challengeMode: env.CHALLENGE_MODE === 'true',
-    demoMode,
-    demoMnemonic: demoMode ? env.CLIENT_MNEMONIC?.trim() : undefined,
     defaultWalletAddress,
+    googleFactCheckApiKey: env.GOOGLE_FACTCHECK_API_KEY?.trim() || undefined,
+    groqApiKey: env.GROQ_API_KEY?.trim() || undefined,
+    groqModel: env.GROQ_MODEL?.trim() || undefined,
   };
 }

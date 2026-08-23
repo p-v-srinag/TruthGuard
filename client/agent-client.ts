@@ -8,7 +8,6 @@ import {
 } from './lib.js';
 
 async function discoverPaidResource(facilitatorUrl: string): Promise<DiscoveryResource | undefined> {
-  // The AVM extension package currently aliases its core dependency; the public client API is compatible.
   const facilitator = new HTTPFacilitatorClient({ url: facilitatorUrl });
   const bazaar = withBazaar(
     facilitator as unknown as Parameters<typeof withBazaar>[0],
@@ -18,7 +17,7 @@ async function discoverPaidResource(facilitatorUrl: string): Promise<DiscoveryRe
     const page = await bazaar.extensions.discovery.listResources({ type: 'http', limit, offset });
     const match = page.items.find(item => {
       const searchable = `${item.resource} ${JSON.stringify(item.metadata ?? {})}`.toLowerCase();
-      return searchable.includes('x402-commerce-template') || searchable.includes('paid resource');
+      return searchable.includes('truthguard') || searchable.includes('verify') || searchable.includes('claim');
     });
     if (match || offset + page.items.length >= page.pagination.total) return match;
   }
@@ -30,38 +29,50 @@ async function main() {
   let url: string;
 
   if (mode === 'bazaar') {
-    console.log('Agent: searching the GoPlausible Bazaar for Algorand paid resource...');
+    console.log('[AGENT] Searching GoPlausible Bazaar for TruthGuard Oracle...');
     const discovered = await discoverPaidResource(facilitatorUrl);
     if (!discovered) {
       throw new Error(
-        'x402 Commerce Template is not currently indexed in Bazaar. A public endpoint and a successful settlement are required before discovery can be claimed.',
+        'TruthGuard is not currently indexed in Bazaar. A public endpoint and a successful settlement are required before discovery can be claimed.',
       );
     }
     url = discovered.resource;
-    console.log(`Agent: discovered ${url}`);
-    console.log(`Agent: ${discovered.accepts.length} payment option(s) advertised.`);
+    console.log(`[AGENT] Discovered endpoint: ${url}`);
   } else if (mode === 'direct') {
     url = resourceUrl();
-    console.log('Agent mode: known resource URL (Bazaar discovery is not being claimed).');
-    console.log(`Agent: selected ${url}`);
+    console.log(`[AGENT] Operating in direct endpoint mode: ${url}`);
   } else {
     throw new Error('AGENT_DISCOVERY must be either "direct" or "bazaar".');
   }
 
   const payer = createPayingClient();
-  console.log('Agent: purchasing the resource with x402...');
-  const response = await payer.fetchWithPayment(url);
-  if (!response.ok) throw new Error(`Purchase failed with HTTP ${response.status}: ${await response.text()}`);
+  console.log('[AGENT] Submitting assertion for verification with x402 payment...');
+
+  const claimPayload = {
+    claim: 'Algorand provides instant transaction finality with zero chain forks.'
+  };
+
+  const response = await payer.fetchWithPayment(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(claimPayload)
+  });
+
+  if (!response.ok) {
+    throw new Error(`Purchase failed with HTTP ${response.status}: ${await response.text()}`);
+  }
 
   const settlement = payer.httpClient.getPaymentSettleResponse(name => response.headers.get(name));
-  if (!settlement.success) throw new Error('The response arrived without a confirmed settlement receipt.');
+  if (!settlement.success) {
+    throw new Error('Response received without confirmed settlement receipt.');
+  }
 
-  console.log(`Agent: settlement confirmed in transaction ${settlement.transaction}`);
-  console.log('Agent: consuming paid resource...');
+  console.log(`[SUCCESS] Agent settlement confirmed in tx: ${settlement.transaction}`);
+  console.log('[AGENT] Consumed verification oracle verdict:');
   console.log(JSON.stringify(await response.json(), null, 2));
 }
 
 main().catch(error => {
-  console.error(`\nAgent demo failed: ${explainPaymentError(error)}`);
+  console.error(`\n[ERROR] Agent execution failed: ${explainPaymentError(error)}`);
   process.exit(1);
 });

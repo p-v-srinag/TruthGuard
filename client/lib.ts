@@ -1,4 +1,3 @@
-import algosdk from 'algosdk';
 import { ALGORAND_MAINNET_CAIP2, ALGORAND_TESTNET_CAIP2 } from '@x402/avm';
 import { createAvmPayingClient } from '../src/x402/client.js';
 
@@ -6,11 +5,7 @@ export type ClientNetwork = 'testnet' | 'mainnet';
 
 export function resourceUrl(): string {
   const baseUrl = (process.env.API_BASE_URL ?? 'http://localhost:3000').replace(/\/$/, '');
-  const address = process.env.WALLET_ADDRESS ?? process.env.PAY_TO_ADDRESS;
-  if (!address || !algosdk.isValidAddress(address)) {
-    throw new Error('Set WALLET_ADDRESS (or PAY_TO_ADDRESS) to a valid Algorand address in .env.');
-  }
-  return `${baseUrl}/api/wallet/${address}`;
+  return `${baseUrl}/api/v1/verify`;
 }
 
 export function clientNetwork(): { name: ClientNetwork; caip2: `${string}:${string}` } {
@@ -27,10 +22,8 @@ export function createPayingClient() {
       'CLIENT_MNEMONIC is missing. Use only a disposable demo wallet, funded with ALGO and opted into USDC.',
     );
   }
-
   const network = clientNetwork();
   const payingClient = createAvmPayingClient(mnemonic, network.name);
-
   return {
     signer: payingClient.signer,
     network,
@@ -49,7 +42,6 @@ export interface PaymentRequiredSummary {
 export function readPaymentRequired(response: Response): PaymentRequiredSummary | null {
   const encoded = response.headers.get('payment-required');
   if (!encoded) return null;
-
   try {
     const parsed = JSON.parse(Buffer.from(encoded, 'base64url').toString('utf8')) as {
       resource?: { description?: string };
@@ -69,7 +61,7 @@ export function readPaymentRequired(response: Response): PaymentRequiredSummary 
       price,
       network: requirement?.network ?? 'unknown',
       asset: String(requirement?.asset ?? requirement?.extra?.asset ?? requirement?.extra?.name ?? 'unknown'),
-      description: parsed.resource?.description ?? 'Paid x402 resource',
+      description: parsed.resource?.description ?? 'TruthGuard Verification Oracle',
     };
   } catch {
     return null;
@@ -86,7 +78,7 @@ export function explainPaymentError(error: unknown): string {
     return `${message}\nFund the payer with enough ALGO for fees/minimum balance and enough USDC for the request.`;
   }
   if (lower.includes('fetch') || lower.includes('network')) {
-    return `${message}\nCheck that x402 Commerce Template and the GoPlausible facilitator are reachable.`;
+    return `${message}\nCheck that TruthGuard and the GoPlausible facilitator are reachable.`;
   }
   return message;
 }

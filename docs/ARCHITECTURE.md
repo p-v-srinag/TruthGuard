@@ -1,6 +1,6 @@
 # x402 Commerce Template Architecture
 
-x402 Commerce Template keeps the paid HTTP concern separate from the resource logic. The default sample resource sells Algorand wallet data, but the same structure works for any bounded API result or action.
+TruthGuard keeps the paid HTTP concern separate from evidence retrieval. It sells one bounded claim-verification report.
 
 ```mermaid
 flowchart TD
@@ -22,7 +22,7 @@ The client asks for a paid response over normal HTTP. An unpaid client stops at 
 
 ### x402 Commerce Template Resource Server
 
-Hono exposes public `GET /health` and a default paid route at `GET /api/wallet/:address`. Address syntax is checked before the payment middleware. Once payment is verified, the handler asks the resource service for the deterministic result. Participants can replace this route with their own paid data, compute, verification, or action endpoint.
+Hono exposes public `GET /health` and protected `POST /api/v1/verify`. Claim/body validation happens before payment middleware. Once payment is verified, the handler calls the evidence-first verification engine.
 
 ### x402 Middleware
 
@@ -38,7 +38,7 @@ Algorand is the settlement rail for the USDC asset transfer. TestNet is safe dem
 
 ### Resource Data Provider
 
-The default sample separately calls an Algorand Indexer for public account data. A customized service might call another API, read chain state, compute a result, or trigger a bounded action. Changing the resource logic does not change the payment protocol.
+TruthGuard queries Google Fact Check when configured and Wikidata for non-verdict context; optional Groq reasoning is constrained to retrieved evidence. Changing this resource logic does not change the payment protocol.
 
 ### Bazaar
 

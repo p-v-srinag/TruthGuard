@@ -5,8 +5,8 @@ import { paymentMiddleware, x402ResourceServer } from '@x402/hono';
 import { bazaarResourceServerExtension, declareDiscoveryExtension } from '@x402-avm/extensions';
 import type { RuntimeConfig } from '../config.js';
 
-export const WALLET_DESCRIPTION =
-  'Returns ALGO balance, ASA holdings, USDC balance, account status, and basic activity information for an Algorand address.';
+export const VERIFY_DESCRIPTION =
+  'TruthGuard evidence-first claim verification: fact-check lookup, open knowledge context, and optional evidence-bounded reasoning for agents.';
 
 export function createX402Middleware(config: RuntimeConfig) {
   const facilitator = new HTTPFacilitatorClient({ url: config.facilitatorUrl });
@@ -15,38 +15,50 @@ export function createX402Middleware(config: RuntimeConfig) {
   server.registerExtension(bazaarResourceServerExtension as unknown as ResourceServerExtension);
 
   const discovery = declareDiscoveryExtension({
+    bodyType: 'json',
     input: {
-      address: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ',
+      claim: 'The Eiffel Tower is in Paris.',
+      context: 'Optional background that is not treated as evidence.',
     },
     inputSchema: {
+      type: 'object',
       properties: {
-        address: {
+        claim: {
           type: 'string',
-          description: 'A valid 58-character Algorand account address',
-          minLength: 58,
-          maxLength: 58,
+          description: 'The statement, factual claim, or data assertion to verify.',
+          minLength: 5,
+          maxLength: 5000,
+        },
+        context: {
+          type: 'string',
+          description: 'Optional background for interpretation. It is never treated as independent factual evidence.',
+          maxLength: 10000,
         },
       },
-      required: ['address'],
+      required: ['claim'],
     },
     output: {
       example: {
-        address: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ',
-        algoBalance: 127.35,
-        assetCount: 9,
-        usdcBalance: 24.5,
-        status: 'active',
-        summary: 'Active paid API holding 9 assets.',
-        createdAssets: 0,
-        appsLocalStateCount: 2,
-        minimumBalance: 0.3,
+        success: true,
+        protocol: 'x402-algorand',
+        timestamp: '2026-08-21T08:00:00.000Z',
+        verificationProofHash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+        verification: {
+          claim: 'The Eiffel Tower is in Paris.',
+          verified: true,
+          verdict: 'SUPPORTED',
+          confidenceScore: 0.86,
+          summary: 'A matching ClaimReview supplied a supporting rating.',
+          evidence: [{ source: 'google_fact_check', title: 'Example ClaimReview', url: 'https://example.org/fact-check' }],
+          aiOrigin: { status: 'NOT_DETERMINABLE' },
+        },
       },
     },
   });
 
   return paymentMiddleware(
     {
-      'GET /api/wallet/:address': {
+      'POST /api/v1/verify': {
         accepts: [
           {
             scheme: 'exact',
@@ -59,7 +71,7 @@ export function createX402Middleware(config: RuntimeConfig) {
             },
           },
         ],
-        description: WALLET_DESCRIPTION,
+        description: VERIFY_DESCRIPTION,
         mimeType: 'application/json',
         extensions: discovery,
       },

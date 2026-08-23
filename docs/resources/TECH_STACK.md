@@ -36,10 +36,10 @@ The starter project ships with a paid wallet-data example so participants can te
 
 | Piece | Technology |
 | --- | --- |
-| Paid route | `GET /api/wallet/:address` |
-| Data source | AlgoNode Algorand Indexer |
+| Paid route | `POST /api/v1/verify` |
+| Data source | Google Fact Check API (optional) and Wikidata context lookup |
 | TestNet USDC ASA | `10458941` |
-| Browser demo | Plain HTML, CSS, and JavaScript served by Hono |
+| Browser demo | Pera Wallet + bundled browser x402 client, served by Hono |
 
 ## Template Extras
 

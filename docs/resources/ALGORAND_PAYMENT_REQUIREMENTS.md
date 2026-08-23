@@ -20,8 +20,7 @@ The payer also needs TestNet USDC.
 
 MainNet uses real value. Before switching:
 
-- Disable `DEMO_MODE`.
-- Use a production-safe signing path for buyers.
+- Use a production-safe signing path for buyers. TruthGuard's browser uses the buyer's connected Pera Wallet.
 - Use the MainNet receiver address in `PAY_TO_ADDRESS`.
 - Confirm the MainNet USDC ASA ID used by the SDK/config.
 - Complete a real paid request and verify receiver balance.

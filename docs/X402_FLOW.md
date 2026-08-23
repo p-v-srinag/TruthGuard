@@ -1,6 +1,6 @@
 # The x402 Commerce Template x402 Flow
 
-This is the real request lifecycle for the default sample route, `GET /api/wallet/:address`. Custom services should keep the same payment lifecycle and replace only the resource path, validation, and business logic.
+This is the real request lifecycle for TruthGuard's paid route, `POST /api/v1/verify`.
 
 ```mermaid
 sequenceDiagram
@@ -9,14 +9,14 @@ sequenceDiagram
     participant Facilitator
     participant Algorand
     participant Indexer
-    Client->>Server: GET /api/wallet/ADDRESS
+    Client->>Server: POST /api/v1/verify {claim}
     Server-->>Client: 402 + PAYMENT-REQUIRED
     Client->>Client: Select requirement and sign payment
     Client->>Server: GET + PAYMENT-SIGNATURE
     Server->>Facilitator: POST verify
     Facilitator-->>Server: Payment valid
-    Server->>Indexer: Fetch default sample data
-    Indexer-->>Server: Resource response
+    Server->>Evidence: Retrieve fact-check and knowledge context
+    Evidence-->>Server: Evidence report
     Server->>Facilitator: POST settle
     Facilitator->>Algorand: Submit USDC transfer
     Algorand-->>Facilitator: Confirm transaction
@@ -26,7 +26,7 @@ sequenceDiagram
 
 ## 1. Unpaid Request
 
-The client sends an ordinary HTTP `GET`. No wallet connection or API key is needed to ask what the resource costs.
+The client sends an ordinary HTTP `POST` with a valid claim. No wallet connection or API key is needed to ask what the resource costs.
 
 ## 2. HTTP 402 Response
 
@@ -38,7 +38,7 @@ x402 Commerce Template advertises the `exact` scheme, price, full Algorand netwo
 
 ## 4. Client Signs Payment
 
-The x402 AVM client constructs an Algorand USDC transfer authorization and asks the payer wallet to sign it. The mnemonic stays inside the client process.
+The x402 AVM client constructs an Algorand USDC transfer authorization and asks the payer wallet to sign it. In the browser, Pera signs locally; the server never receives a mnemonic.
 
 ## 5. Paid Request
 
@@ -50,7 +50,7 @@ x402 Commerce Template sends the payload and selected requirement to GoPlausible
 
 ## 7. Resource Execution
 
-Only after verification does the Hono handler fetch public account data and build the paid response. This prevents unpaid access to the resource work.
+Only after verification does the Hono handler retrieve evidence and build the paid response. This prevents unpaid access to the resource work.
 
 ## 8. Settlement
 

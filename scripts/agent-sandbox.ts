@@ -7,7 +7,8 @@ async function main() {
   const maxUsd = Number(process.env.AGENT_MAX_USD ?? '0.01');
 
   console.log(`Sandbox agent evaluating ${url}`);
-  const challenge = await fetch(url);
+  const request = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ claim: 'Sandbox verification request.' }) };
+  const challenge = await fetch(url, request);
   if (challenge.status !== 402) {
     throw new Error(`Expected HTTP 402 before payment, received ${challenge.status}.`);
   }
@@ -30,7 +31,7 @@ async function main() {
   }
 
   const payer = createPayingClient();
-  const paid = await payer.fetchWithPayment(url);
+  const paid = await payer.fetchWithPayment(url, request);
   if (!paid.ok) {
     throw new Error(`Paid request failed with HTTP ${paid.status}: ${await paid.text()}`);
   }

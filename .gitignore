@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+# Generated web bundle (built by pnpm build / pnpm dev)
+public/assets/
+
 # TypeScript and build output
 dist/
 coverage/

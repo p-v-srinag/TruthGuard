@@ -10,6 +10,5 @@ export const testConfig: RuntimeConfig = {
   payTo: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ',
   price: '$0.001',
   challengeMode: false,
-  demoMode: false,
   defaultWalletAddress: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ',
 };

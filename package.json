@@ -8,8 +8,9 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc -p tsconfig.json",
+    "dev": "pnpm bundle:web && tsx watch src/server.ts",
+    "build": "pnpm bundle:web && tsc -p tsconfig.json",
+    "bundle:web": "esbuild src/web/browser-client.ts --bundle --format=iife --platform=browser --target=es2022 --alias:crypto=crypto-browserify --alias:util=util --alias:stream=stream-browserify --alias:events=events --outfile=public/assets/app.js",
     "start": "node dist/src/server.js",
     "test": "vitest run",
     "smoke": "tsx scripts/smoke.ts",
@@ -22,17 +23,23 @@
   },
   "dependencies": {
     "@hono/node-server": "2.1.1",
+    "@perawallet/connect": "^1.6.0",
     "@x402-avm/extensions": "2.6.1",
     "@x402/avm": "2.19.0",
     "@x402/core": "2.19.0",
     "@x402/fetch": "2.19.0",
     "@x402/hono": "2.19.0",
     "algosdk": "3.6.0",
+    "crypto-browserify": "^3.12.1",
     "dotenv": "17.2.1",
-    "hono": "4.13.2"
+    "events": "3.3.0",
+    "hono": "4.13.2",
+    "stream-browserify": "^3.0.0",
+    "util": "^0.12.5"
   },
   "devDependencies": {
     "@types/node": "24.3.0",
+    "esbuild": "^0.25.12",
     "tsx": "4.23.12",
     "typescript": "5.9.2",
     "vitest": "4.1.10"

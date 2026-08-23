@@ -10,7 +10,7 @@ Use this map when a participant asks "where do I change the template?"
 | Paid buyer flow | `client/paid-client.ts` |
 | Autonomous buyer flow | `client/agent-client.ts` |
 | Shared buyer helpers | `client/lib.ts`, `sdk/extensions.ts` |
-| Browser payment demo | `src/web/page.ts`, `src/web/app-script.ts`, `src/web/styles.ts` |
+| Browser payment demo | `src/web/page.ts`, `src/web/browser-client.ts`, `src/web/browser-script.ts`, `src/web/styles.ts` |
 
 ## Server Side
 
@@ -18,8 +18,7 @@ Use this map when a participant asks "where do I change the template?"
 | --- | --- |
 | App routes and middleware order | `src/app.ts` |
 | Runtime env validation | `src/config.ts` |
-| Paid business logic | `src/routes/wallet.ts` or a new route module |
-| Local one-click demo agent | `src/routes/demo.ts` |
+| Paid business logic | `src/routes/verify.ts`, `src/services/verification.ts` |
 | Server start | `src/server.ts` |
 
 ## x402 And Facilitator
@@ -29,7 +28,8 @@ Use this map when a participant asks "where do I change the template?"
 | Protected route registration | `src/x402/config.ts` |
 | Price, network, asset, receiver | `.env`, `src/config.ts`, `src/x402/config.ts` |
 | GoPlausible facilitator URL | `FACILITATOR_URL` |
-| Client signer wiring | `src/x402/client.ts` |
+| CLI signer wiring | `src/x402/client.ts` |
+| Browser signer wiring | `src/web/browser-client.ts` (Pera Wallet) |
 | Payment inspection CLI | `scripts/x402-cli.ts` |
 
 ## Discovery

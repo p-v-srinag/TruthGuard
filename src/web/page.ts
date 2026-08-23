@@ -10,137 +10,130 @@ function escapeHtml(value: string): string {
 }
 
 export function renderPage(config: RuntimeConfig): string {
-  const address = escapeHtml(config.defaultWalletAddress);
   const receiver = escapeHtml(config.payTo);
-  const demoState = config.demoMode ? 'Agent ready' : 'Demo disabled';
+  const defaultClaim = 'The Eiffel Tower is in Paris.';
 
   return `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Buy an Algorand paid resource report with x402 and TestNet USDC." />
-    <title>x402 Commerce Template — Paid resource, paid by agents</title>
+    <title>TruthGuard Oracle | Machine-to-Machine Verification</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23100d18'/%3E%3Ctext x='16' y='21.5' font-family='monospace' font-size='12' font-weight='700' fill='%23a78bfa' text-anchor='middle'%3ETG%3C/text%3E%3C/svg%3E" />
+    <meta name="theme-color" content="#100d18" />
     <link rel="stylesheet" href="/assets/styles.css" />
+    <script>window.TRUTHGUARD_CONFIG = ${JSON.stringify({ network: config.network, networkName: config.networkName })};</script>
     <script src="/assets/app.js" defer></script>
   </head>
   <body>
-    <div class="noise" aria-hidden="true"></div>
     <header class="site-header">
-      <a class="brand" href="/" aria-label="x402 Commerce Template home">
-        <span class="brand-mark">A</span>
-        <span>x402 Commerce Template</span>
+      <a class="brand" href="/" aria-label="TruthGuard Oracle">
+        <span class="brand-mark">TG</span>
+        <span>TruthGuard Oracle</span>
       </a>
       <div class="header-status">
         <span class="status-dot"></span>
         <span>Algorand ${escapeHtml(config.networkName)}</span>
         <span class="header-divider"></span>
-        <span>${demoState}</span>
+        <span>Pera Wallet Payments</span>
       </div>
     </header>
-
     <main>
       <section class="hero">
-        <p class="eyebrow">PAID API STARTER · POWERED BY x402</p>
-        <h1>Ask an agent.<br /><span>Watch it pay.</span></h1>
+        <p class="eyebrow">x402 Agentic Fact-Checking Oracle</p>
+        <h1>Autonomous Claim Verification.<br /><span>Machine-Paid Trust.</span></h1>
         <p class="hero-copy">
-          One click triggers a real HTTP 402, a ${escapeHtml(config.price)} USDC payment on Algorand,
-          GoPlausible settlement, and an unlocked paid response.
+          Agents and people buy one evidence-first verification at ${escapeHtml(config.price)} USDC. Unverified claims stay unverified—TruthGuard does not invent certainty.
         </p>
       </section>
-
-      <section class="workspace" aria-label="x402 Commerce Template payment demo">
+      <section class="workspace">
         <div class="demo-panel">
           <div class="panel-heading">
-            <div>
-              <p class="section-label">LIVE x402 DEMO</p>
-              <h2>Purchase a paid response</h2>
-            </div>
-            <span class="testnet-pill">TESTNET · NO REAL FUNDS</span>
+            <h2>Live Oracle Verification Flow</h2>
+            <span class="testnet-pill">Algorand TestNet Rail</span>
           </div>
-
           <form id="purchase-form">
-            <label for="wallet-address">Algorand resource input</label>
+            <label for="claim-input">Assertion / Statement to Verify</label>
             <div class="input-row">
               <input
-                id="wallet-address"
-                name="address"
-                value="${address}"
-                maxlength="58"
+                id="claim-input"
+                name="claim"
+                value="${escapeHtml(defaultClaim)}"
                 spellcheck="false"
                 autocomplete="off"
                 required
               />
-              <button id="purchase-button" type="submit">
-                <span>Ask agent to buy</span>
-                <span class="button-arrow" aria-hidden="true">↗</span>
-              </button>
+              <button id="purchase-button" type="submit">Pay & Verify with Pera</button>
             </div>
+            <div class="wallet-row"><button id="connect-wallet" class="wallet-button" type="button">Connect Pera Wallet</button><span id="wallet-address">Wallet not connected</span></div>
           </form>
-
-          <div class="terms" aria-label="Payment terms">
-            <div><span>Price</span><strong id="term-price">${escapeHtml(config.price)} USDC</strong></div>
-            <div><span>Network</span><strong>Algorand TestNet</strong></div>
-            <div><span>Asset</span><strong>ASA ${escapeHtml(config.usdcAssetId)}</strong></div>
-            <div><span>Receiver</span><strong title="${receiver}">${receiver.slice(0, 7)}…${receiver.slice(-5)}</strong></div>
+          <div class="terms">
+            <div><span>Oracle Fee</span><strong id="term-price">${escapeHtml(config.price)} USDC</strong></div>
+            <div><span>Settlement Rail</span><strong>Algorand TestNet</strong></div>
+            <div><span>Asset ASA</span><strong>ASA ${escapeHtml(config.usdcAssetId)}</strong></div>
+            <div><span>Receiver PayTo</span><strong title="${receiver}">${receiver.slice(0, 8)}...${receiver.slice(-6)}</strong></div>
           </div>
-
-          <div class="activity" aria-live="polite">
+          <div class="activity">
             <div class="activity-topline">
-              <span>PAYMENT ACTIVITY</span>
-              <span id="activity-status">Ready</span>
+              <span>PROTOCOL EXECUTION LOG</span>
+              <span id="activity-status">STANDBY</span>
             </div>
             <ol class="steps">
-              <li data-step="challenge"><span class="step-icon">1</span><div><strong>Request resource</strong><small>Call x402 Commerce Template without payment</small></div></li>
-              <li data-step="terms"><span class="step-icon">2</span><div><strong>Read HTTP 402</strong><small>Inspect price, network, and asset</small></div></li>
-              <li data-step="agent"><span class="step-icon">3</span><div><strong>Agent signs payment</strong><small>Mnemonic stays on the local server</small></div></li>
-              <li data-step="settlement"><span class="step-icon">4</span><div><strong>Settle on Algorand</strong><small>GoPlausible verifies and submits</small></div></li>
-              <li data-step="report"><span class="step-icon">5</span><div><strong>Unlock result</strong><small>Render the paid JSON response</small></div></li>
+              <li data-step="challenge"><strong>1. Query Oracle</strong><small>POST without proof</small></li>
+              <li data-step="terms"><strong>2. Read 402</strong><small>Parse USDC terms</small></li>
+              <li data-step="agent"><strong>3. Sign AVM Tx</strong><small>Client wallet signs</small></li>
+              <li data-step="settlement"><strong>4. Settle On-Chain</strong><small>GoPlausible facilitator</small></li>
+              <li data-step="report"><strong>5. Deliver Proof</strong><small>Unlock verification</small></li>
             </ol>
-            <p id="activity-message" class="activity-message">Enter an address and ask the agent to begin.</p>
+            <p id="activity-message" class="activity-message">Connect Pera, review the 402 terms, then approve the exact USDC payment in your wallet.</p>
           </div>
         </div>
-
         <aside class="explainer">
-          <p class="section-label">WHAT HAPPENS</p>
-          <h2>No login. No API key.</h2>
-          <p>An autonomous client understands the price directly from the HTTP response and pays only for this request.</p>
+          <h2>Machine-to-Machine Trust</h2>
           <div class="flow-list">
-            <div><span>01</span><p><strong>Discover terms</strong><small>402 Payment Required</small></p></div>
-            <div><span>02</span><p><strong>Authorize USDC</strong><small>Exact AVM scheme</small></p></div>
-            <div><span>03</span><p><strong>Confirm settlement</strong><small>Algorand transaction receipt</small></p></div>
-          </div>
-          <div class="safety-note">
-            <span aria-hidden="true">◇</span>
-            <p><strong>Demo-safe</strong><br />The one-click agent is TestNet-only and never sends the mnemonic to the browser.</p>
+            <div>
+              <strong>No Subscriptions / Zero API Keys</strong>
+              <small>Autonomous agents procure intelligence dynamically per transaction using native HTTP 402 negotiation.</small>
+            </div>
+            <div>
+              <strong>Sub-Second Finality</strong>
+              <small>Algorand settles the micro-transaction in under 500ms, releasing the knowledge payload immediately.</small>
+            </div>
+            <div>
+              <strong>Cryptographic Provenance Proof</strong>
+              <small>Every report includes a tamper-evident SHA-256 hash, evidence links, and a settlement receipt.</small>
+            </div>
           </div>
         </aside>
       </section>
-
       <section id="result" class="result" hidden>
         <div class="result-heading">
-          <div>
-            <p class="section-label success-label">SETTLEMENT CONFIRMED</p>
-            <h2>Paid resource unlocked</h2>
-          </div>
-          <a id="explorer-link" class="explorer-link" href="#" target="_blank" rel="noreferrer">View transaction ↗</a>
+          <h2>Oracle Verification Verdict</h2>
+          <a id="explorer-link" class="explorer-btn" href="#" target="_blank" rel="noreferrer">View On-Chain Settlement</a>
         </div>
         <div class="metrics">
-          <article><span>ALGO balance</span><strong id="metric-algo">—</strong></article>
-          <article><span>Asset holdings</span><strong id="metric-assets">—</strong></article>
-          <article><span>USDC balance</span><strong id="metric-usdc">—</strong></article>
-          <article><span>Account status</span><strong id="metric-status">—</strong></article>
+          <article><span>Verdict Status</span><strong id="metric-status">-</strong></article>
+          <article><span>Confidence Score</span><strong id="metric-confidence">-</strong></article>
+          <article><span>Protocol</span><strong>x402-algorand</strong></article>
+          <article><span>Settlement</span><strong>TestNet USDC</strong></article>
         </div>
         <div class="result-bottom">
-          <div><span>SUMMARY</span><p id="report-summary">—</p></div>
-          <div><span>TRANSACTION</span><code id="transaction-id">—</code></div>
+          <div>
+            <span>Oracle Recommendation & Evidence</span>
+            <p id="report-summary">-</p>
+          </div>
+          <div>
+            <span>Cryptographic Proof Hash</span>
+            <code id="proof-hash">-</code>
+            <span style="margin-top: 10px;">Algorand Transaction ID</span>
+            <code id="transaction-id">-</code>
+          </div>
         </div>
       </section>
     </main>
-
     <footer>
-      <span>x402 Commerce Template / x402 demo</span>
-      <span>HTTP → USDC → Algorand → JSON</span>
+      <span>TruthGuard Autonomous Oracle</span>
+      <span>Algorand x402 Protocol Implementation</span>
     </footer>
   </body>
 </html>`;
