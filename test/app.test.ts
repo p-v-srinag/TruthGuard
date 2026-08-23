@@ -283,7 +283,6 @@ describe('TruthGuard x402 Verification API - Edge Cases & Security', () => {
     expect(result.confidenceScore).toBeLessThanOrEqual(0.75);
     expect(result.evidence.at(-1)).toMatchObject({ source: 'groq_reasoning' });
   });
-<<<<<<< HEAD
 
   it('ignores tangential ClaimReviews that merely share entities with a true claim', async () => {
     const engine = new VerificationEngine({
@@ -339,6 +338,4 @@ describe('TruthGuard x402 Verification API - Edge Cases & Security', () => {
     expect(result.verdict).toBe('INSUFFICIENT_EVIDENCE');
     expect(result.layersUsed).not.toContain('google_fact_check');
   });
-=======
->>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
 });

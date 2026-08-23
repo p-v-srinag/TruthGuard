@@ -1,16 +1,9 @@
-<<<<<<< HEAD
 import { createHash } from 'node:crypto';
-=======
->>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
 import { Hono } from 'hono';
 import type { Context } from 'hono';
 import type { RuntimeConfig } from './config.js';
 import { createVerifyClaimHandler, type VerificationRequest } from './routes/verify.js';
-<<<<<<< HEAD
 import { VerificationEngine, type VerificationResult } from './services/verification.js';
-=======
-import { VerificationEngine } from './services/verification.js';
->>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
 import { loadBrowserAppScript } from './web/browser-script.js';
 import { renderPage } from './web/page.js';
 import { STYLES } from './web/styles.js';
@@ -19,11 +12,8 @@ import { createX402Middleware } from './x402/config.js';
 export type AppEnv = {
   Variables: {
     validatedBody: VerificationRequest;
-<<<<<<< HEAD
     verificationPromise?: Promise<VerificationResult>;
     verificationStartedAt?: number;
-=======
->>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
   };
 };
 
@@ -33,7 +23,6 @@ export interface AppOptions {
 
 const UNPAID_RATE_LIMIT = { windowMs: 60_000, max: 30 } as const;
 const unpaidHits = new Map<string, number[]>();
-<<<<<<< HEAD
 const WARM_RESULT_TTL_MS = 60_000;
 const WARM_CACHE_MAX = 128;
 const warmVerifications = new Map<string, Promise<VerificationResult>>();
@@ -42,9 +31,6 @@ function warmCacheKey(claim: string, context?: string): string {
   return createHash('sha256').update(`${claim}\u0000${context ?? ''}`).digest('hex');
 }
 
-=======
-
->>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
 function rateLimitKey(c: Context<AppEnv>): string {
   return c.req.header('x-forwarded-for')?.split(',')[0]?.trim() || 'local';
 }
@@ -161,7 +147,6 @@ export function createApp(config: RuntimeConfig, options: AppOptions = {}) {
       }
 
       c.set('validatedBody', body as VerificationRequest);
-<<<<<<< HEAD
 
       // Speculative verification: once a paid attempt arrives, start gathering evidence
       // immediately so it overlaps facilitator verify + on-chain settlement instead of
@@ -183,8 +168,6 @@ export function createApp(config: RuntimeConfig, options: AppOptions = {}) {
         c.set('verificationPromise', promise);
         c.set('verificationStartedAt', Date.now());
       }
-=======
->>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
     }
     await next();
   });
