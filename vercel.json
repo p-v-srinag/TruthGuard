@@ -1,15 +1,10 @@
 {
-<<<<<<< HEAD
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "pnpm build",
-  "rewrites": [{ "source": "/(.*)", "destination": "/api/index" }]
-=======
-  "version": 2,
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/api/index.ts"
+      "destination": "/api/index"
     }
   ]
->>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
 }
