@@ -54,6 +54,7 @@ const DEFAULT_GROQ_MODEL = 'openai/gpt-oss-20b';
 const REFUTED_RATINGS = /false|incorrect|misleading|pants on fire|fake|scam|untrue|no evidence/i;
 const SUPPORTED_RATINGS = /true|correct|accurate|mostly true|verified/i;
 
+<<<<<<< HEAD
 /** Relevance gating: a ClaimReview only counts when it actually reviews this wording,
  *  not merely mentions the same entities. Keyword search alone returns tangential hits
  *  (e.g., a photo-hoax review that shares two nouns with a true claim). */
@@ -91,6 +92,8 @@ function relevance(userTokens: Set<string>, reviewTokens: Set<string>): { coeffi
   return { coefficient: intersection / Math.min(userTokens.size, reviewTokens.size), jaccard: intersection / union };
 }
 
+=======
+>>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
 function clamp(value: number, minimum: number, maximum: number): number {
   return Math.max(minimum, Math.min(maximum, value));
 }
@@ -129,6 +132,7 @@ export class VerificationEngine {
     const layersUsed: string[] = [];
     const warnings: string[] = [];
 
+<<<<<<< HEAD
     // All retrieval fires concurrently; synthesis stays gated on retrieved evidence,
     // so semantics match the sequential pipeline while wall-clock time drops.
     const [factCheckResult, knowledgeResult] = await Promise.all([
@@ -138,12 +142,19 @@ export class VerificationEngine {
     const factCheck = factCheckResult;
     const knowledgeContext = knowledgeResult;
 
+=======
+    const factCheck = await this.lookupFactChecks(claim, warnings);
+>>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
     if (factCheck) {
       evidence.push(factCheck.evidence);
       layersUsed.push('google_fact_check');
       return { ...factCheck, evidence, layersUsed, warnings };
     }
 
+<<<<<<< HEAD
+=======
+    const knowledgeContext = await this.lookupOpenKnowledge(claim, warnings);
+>>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
     if (knowledgeContext.length > 0) {
       evidence.push(...knowledgeContext);
       layersUsed.push('open_knowledge_context');
@@ -168,19 +179,28 @@ export class VerificationEngine {
 
   private async lookupFactChecks(claim: string, warnings: string[]) {
     if (!this.options.googleFactCheckApiKey) return undefined;
+<<<<<<< HEAD
     const claimTokens = tokenize(claim);
+=======
+>>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
     try {
       const url = new URL('https://factchecktools.googleapis.com/v1alpha1/claims:search');
       url.searchParams.set('query', claim);
       url.searchParams.set('languageCode', 'en');
+<<<<<<< HEAD
       url.searchParams.set('pageSize', '20');
       url.searchParams.set('key', this.options.googleFactCheckApiKey);
       const response = await this.fetchImpl(url, { signal: AbortSignal.timeout(2_500) });
+=======
+      url.searchParams.set('key', this.options.googleFactCheckApiKey);
+      const response = await this.fetchImpl(url, { signal: AbortSignal.timeout(3_000) });
+>>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
       if (!response.ok) {
         warnings.push(`Google Fact Check lookup returned HTTP ${response.status}; continuing without it.`);
         return undefined;
       }
       const body = (await response.json()) as { claims?: GoogleClaim[] };
+<<<<<<< HEAD
 
       // Keep only ClaimReviews whose reviewed wording actually matches the submitted claim.
       let best: { claim: GoogleClaim; review: NonNullable<GoogleClaim['claimReview']>[number]; rating: string; score: number } | undefined;
@@ -211,6 +231,21 @@ export class VerificationEngine {
           source: 'google_fact_check' as const,
           title: best.review.title ?? `${publisher} ClaimReview`, url: best.review.url ?? best.review.publisher?.site,
           excerpt: `${best.claim.text ?? claim} — rating: ${best.rating}`, publishedAt: best.review.reviewDate,
+=======
+      const matchedClaim = body.claims?.[0];
+      const review = matchedClaim?.claimReview?.[0];
+      const rating = review?.textualRating?.trim();
+      if (!matchedClaim || !review || !rating) return undefined;
+      const verdict = ratingVerdict(rating);
+      const publisher = review.publisher?.name ?? 'Fact-check publisher';
+      return {
+        verdict, confidenceScore: factCheckConfidence(verdict, rating),
+        summary: `${publisher} rated a matching claim “${rating}”.`,
+        evidence: {
+          source: 'google_fact_check' as const,
+          title: review.title ?? `${publisher} ClaimReview`, url: review.url ?? review.publisher?.site,
+          excerpt: `${matchedClaim.text ?? claim} — rating: ${rating}`, publishedAt: review.reviewDate,
+>>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
         },
       };
     } catch {
@@ -247,7 +282,11 @@ export class VerificationEngine {
     url.searchParams.set('origin', '*');
     const response = await this.fetchImpl(url, {
       headers: { 'User-Agent': 'TruthGuard-x402/1.0 (evidence lookup)' },
+<<<<<<< HEAD
       signal: AbortSignal.timeout(2_500),
+=======
+      signal: AbortSignal.timeout(3_000),
+>>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
     });
     if (!response.ok) return [];
     const body = (await response.json()) as WikipediaSearchResponse;
@@ -271,7 +310,11 @@ export class VerificationEngine {
       url.searchParams.set('language', 'en');
       url.searchParams.set('format', 'json');
       url.searchParams.set('origin', '*');
+<<<<<<< HEAD
       const response = await this.fetchImpl(url, { headers: { 'User-Agent': 'TruthGuard-x402/1.0 (evidence lookup)' }, signal: AbortSignal.timeout(2_500) });
+=======
+      const response = await this.fetchImpl(url, { headers: { 'User-Agent': 'TruthGuard-x402/1.0 (evidence lookup)' }, signal: AbortSignal.timeout(3_000) });
+>>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
       if (!response.ok) return [];
       const body = (await response.json()) as WikidataSearchResponse;
       const entity = body.search?.[0];

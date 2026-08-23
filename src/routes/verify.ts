@@ -1,7 +1,11 @@
 import { createHash } from 'node:crypto';
 import type { Context } from 'hono';
 import type { AppEnv } from '../app.js';
+<<<<<<< HEAD
 import { VerificationEngine, type VerificationResult } from '../services/verification.js';
+=======
+import { VerificationEngine } from '../services/verification.js';
+>>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
 
 export interface VerificationRequest {
   claim: string;
@@ -13,6 +17,7 @@ export function createVerifyClaimHandler(engine: VerificationEngine) {
     const startedAt = Date.now();
     const body = c.get('validatedBody');
     const claim = body.claim.trim();
+<<<<<<< HEAD
     const warmed = c.get('verificationPromise');
     const verificationStartedAt = c.get('verificationStartedAt') ?? startedAt;
     let verification: VerificationResult;
@@ -21,6 +26,9 @@ export function createVerifyClaimHandler(engine: VerificationEngine) {
     } else {
       verification = await engine.verify(claim, body.context?.trim());
     }
+=======
+    const verification = await engine.verify(claim, body.context?.trim());
+>>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
     const timestamp = new Date().toISOString();
     const proofPayload = JSON.stringify({ claim, timestamp, verification });
 
@@ -29,7 +37,10 @@ export function createVerifyClaimHandler(engine: VerificationEngine) {
       protocol: 'x402-algorand',
       timestamp,
       latencyMs: Date.now() - startedAt,
+<<<<<<< HEAD
       verificationMs: Date.now() - verificationStartedAt,
+=======
+>>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
       verificationProofHash: createHash('sha256').update(proofPayload).digest('hex'),
       verification: {
         claim,

@@ -49,8 +49,11 @@ TruthGuard returns `SUPPORTED`, `REFUTED`, or `INSUFFICIENT_EVIDENCE`. A keyword
 
 ## Evidence providers and API keys
 
+<<<<<<< HEAD
 Layer 1 applies **relevance gating**: a ClaimReview is treated as authoritative only when its reviewed wording closely matches the submitted claim (token-overlap plus polarity checks). Tangential search hits that merely share entities — e.g., an unrelated "Eiffel Tower photo hoax" rating — are discarded, so true claims are never refuted by someone else's false claim.
 
+=======
+>>>>>>> 2bc5af1c52910442c3c72b7d01ec6ff6bc1264af
 Open-knowledge context (Wikipedia full-text search plus Wikidata entity lookup) works without any key. For useful published-fact-check matches, enable Google Fact Check Tools: create or select a Google Cloud project, enable **Fact Check Tools API**, create a restricted server API key under **APIs & Services → Credentials**, then put it in `.env` as `GOOGLE_FACTCHECK_API_KEY`. The API's `claims:search` endpoint is the source TruthGuard calls. See [Google's API reference](https://developers.google.com/fact-check/tools/api/reference/rest/).
 
 `GROQ_API_KEY` is optional. Create a Groq Console key at [Groq Quickstart](https://console.groq.com/docs/quickstart) and add it only to `.env`. TruthGuard uses it only to synthesize retrieved evidence, caps its confidence, and does not send the key to the browser. Do not put either key in frontend code or commit `.env`.
